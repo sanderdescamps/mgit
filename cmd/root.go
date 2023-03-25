@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/sanderdescamps/mgit/internal/config"
 	"github.com/sanderdescamps/mgit/internal/console"
 	"github.com/spf13/cobra"
@@ -13,7 +11,7 @@ var Verbose bool
 var extraConfigPaths []string
 var repoConfigPaths []string
 var display console.Display
-var repoCfg config.RepoConfigManager
+var repoCfg config.Manager
 
 var rootCmd = &cobra.Command{
 	Use: "mgit",
@@ -42,32 +40,32 @@ func main() {
 }
 
 func initConfig() {
-	cmgr := config.ConfigManager{}
-	cmgr.AddDefaultPaths()
+	// cmgr := config.ConfigManager{}
+	// cmgr.AddDefaultPaths()
 
-	//current work dir
-	if wd, err := os.Getwd(); err == nil {
-		cmgr.AddConfigPathE(wd, ".mgit", []string{"yml", "yaml", "json"})
-		cmgr.AddConfigPathE(wd, "mgit", []string{"yml", "yaml", "json"})
-	} else {
-		display.Warningf("failed to get current work directory: %v", err)
-	}
+	// //current work dir
+	// if wd, err := os.Getwd(); err == nil {
+	// 	cmgr.AddConfigPathE(wd, ".mgit", []string{"yml", "yaml", "json"})
+	// 	cmgr.AddConfigPathE(wd, "mgit", []string{"yml", "yaml", "json"})
+	// } else {
+	// 	display.Warningf("failed to get current work directory: %v", err)
+	// }
 
-	if len(extraConfigPaths) > 0 {
-		for _, p := range extraConfigPaths {
-			if _, err := os.Stat(p); os.IsNotExist(err) {
-				display.Warningf("config file (%s) not found", p)
-				continue
-			}
-			cmgr.AddConfigPath(p)
-		}
-	}
+	// if len(extraConfigPaths) > 0 {
+	// 	for _, p := range extraConfigPaths {
+	// 		if _, err := os.Stat(p); os.IsNotExist(err) {
+	// 			display.Warningf("config file (%s) not found", p)
+	// 			continue
+	// 		}
+	// 		cmgr.AddConfigPath(p)
+	// 	}
+	// }
 
-	for _, c := range cmgr.GetConfigs() {
-		if err := viper.MergeConfigMap(c); err != nil {
-			panic(err)
-		}
-	}
+	// for _, c := range cmgr.GetConfigs() {
+	// 	if err := viper.MergeConfigMap(c); err != nil {
+	// 		panic(err)
+	// 	}
+	// }
 }
 
 func initDisplay() {
@@ -80,7 +78,7 @@ func initDisplay() {
 }
 
 func initRepo() {
-	repoCfg = config.RepoConfigManager{}
+	repoCfg = config.Manager{}
 
 	for _, p := range viper.GetStringSlice("repo_config_paths") {
 		repoCfg.LoadRepos(p)

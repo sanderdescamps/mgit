@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"strings"
+
+	"github.com/sanderdescamps/mgit/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +26,19 @@ var cmdRepoShow = &cobra.Command{
 		initRepo()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		for idx, i := range repoCfg.GetRepoList() {
-			display.Print(i.GitUrl)
-			display.Infof("%d", idx)
+		display.Print(strings.Repeat("-", 80))
+		for _, i := range repoCfg.GetRepoList() {
+			display.Print("%s", i.GetRepoCloneUrl())
+			display.Print(" path: %s", i.GetFSPath())
+			display.Print(" settings:")
+			for key, val := range i.GetAllSettings() {
+				display.Print("   - %s: %v", key, val)
+			}
+			display.Print(strings.Repeat("-", 80))
+		}
+	},
+}
+
 		}
 	},
 }

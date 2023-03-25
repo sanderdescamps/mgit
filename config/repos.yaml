@@ -1,0 +1,31 @@
+---
+repos:
+  _git_url_template: git@gitlab.com:axxesit/{{ .rpath }}.git
+  ansible_playbook:
+    vyos:
+      _git_url: ssh://git@gitea.myhomecloud.lan:3022/ansible_playbook/vyos.git
+  sdescamps:
+    silk-terraform-test:
+      _git_url: ssh://git@gitea.myhomecloud.lan:3022/ansible_playbook/vyos.git
+    terraform-provider-vmware-tags:
+    terraform-provider-foreman:
+      _clone: true
+    gidc-terraform-test:
+  axxesit:
+    _git_url_fpath: "axxesit"
+    _git_url_template: git@bitbucket.org:{{ .fpath }}/{{ .repo_name}}.git
+    terraform-rundeck: 
+  myhomecloud:
+    _git_url_fpath: "sdescamps"
+    _git_url_template: ssh://git@gitea.myhomecloud.lan:3022/{{ .fpath }}/{{ .repo_name}}.git
+    
+  
+
+
+
+
+
+
+
+
+

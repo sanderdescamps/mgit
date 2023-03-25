@@ -2,10 +2,12 @@ package config
 
 import (
 	"fmt"
+	"os/user"
+	"path/filepath"
 	"strings"
 )
 
-func MergeDir(maps ...map[string]interface{}) map[string]interface{} {
+func mergeDir(maps ...map[string]interface{}) map[string]interface{} {
 	merged := make(map[string]interface{})
 	for _, m := range maps {
 		for key, val := range m {
@@ -20,7 +22,7 @@ func MergeDir(maps ...map[string]interface{}) map[string]interface{} {
 				merged[key] = v.(float64)
 			case map[string]interface{}:
 				if merged[key] != nil {
-					merged[key] = MergeDir(merged[key].(map[string]interface{}), val.(map[string]interface{}))
+					merged[key] = mergeDir(merged[key].(map[string]interface{}), val.(map[string]interface{}))
 				} else {
 					merged[key] = val.(map[string]interface{})
 				}
@@ -81,10 +83,21 @@ func MergeDir(maps ...map[string]interface{}) map[string]interface{} {
 // 	return flatRepoList
 // }
 
-func mapToOneLineString(m map[string]interface{}) string {
-	var outputs []string
-	for k, v := range m {
-		outputs = append(outputs, fmt.Sprintf("%s=%s", k, v))
+// func mapToOneLineString(m map[string]interface{}) string {
+// 	var outputs []string
+// 	for k, v := range m {
+// 		outputs = append(outputs, fmt.Sprintf("%s=%s", k, v))
+// 	}
+// 	return strings.Join(outputs, ", ")
+// }
+
+func pathParse(path string) string {
+	usr, _ := user.Current()
+	if path == "~" {
+		path = usr.HomeDir
+	} else if strings.HasPrefix(path, "~/") {
+		path = filepath.Join(usr.HomeDir, path[2:])
 	}
-	return strings.Join(outputs, ", ")
+	path = strings.Replace(path, "/./", "/", -1)
+	return path
 }

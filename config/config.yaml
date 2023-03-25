@@ -1,0 +1,8 @@
+---
+# root_dir: "~/git"
+root_dir: "./git"
+git_url_template: "git@github.com:{{ git_path }}.git"
+# git_url_template: "git@github.com:{{ path }}/.git"
+repo_config_paths:
+  - /home/sander/git/mgit/repos.yaml
+
