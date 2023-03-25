@@ -6,6 +6,22 @@ import (
 	"github.com/go-git/go-git/v5"
 )
 
+// type Repo struct {
+// 	Url      string
+// 	RepoPath string
+// 	repo     *git.Repository
+// 	Display  DisplayInterface
+// }
+
+func NewRepo(url string, path string, display DisplayInterface) Repo {
+	repo := Repo{
+		Url:      url,
+		RepoPath: path,
+		Display:  display,
+	}
+	return repo
+}
+
 func (r *Repo) isClonedOnFileSystem() bool {
 	if _, err := os.Stat(r.RepoPath); os.IsNotExist(err) {
 		return false

@@ -31,8 +31,9 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 
 	// rootCmd.AddCommand(cmdClone, cmdPull, cmdConfig)
-	rootCmd.AddCommand(cmdTest, cmdConfig, cmdClone, cmdRepo)
+	rootCmd.AddCommand(cmdTest, cmdConfig, cmdRepo, cmdRepoClone)
 	cmdConfig.AddCommand(cmdConfigShow, cmdConfigValidate)
+	cmdRepo.AddCommand(cmdRepoClone)
 }
 
 func main() {
