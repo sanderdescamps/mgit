@@ -9,13 +9,15 @@ import (
 )
 
 type confRepo struct {
-	confElem
 	parent        *confFolder
 	LocalSettings map[string]interface{}
 	Name          string
 }
 
 func newconfRepo(name string, parent *confFolder, settings map[string]interface{}) confRepo {
+	if settings == nil {
+		settings = map[string]interface{}{}
+	}
 	return confRepo{
 		Name:          name,
 		parent:        parent,
@@ -81,7 +83,7 @@ func (r confRepo) GetSetting(key string) (interface{}, bool) {
 	if val, ok := r.LocalSettings[key]; ok {
 		return val, true
 	} else if r.getParent() != nil {
-		if val, ok := r.getParent().getSetting(key); ok {
+		if val, ok := r.getParent().GetSetting(key); ok {
 			return val, true
 		}
 	}

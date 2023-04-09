@@ -4,6 +4,9 @@ import (
 	"os"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/storage/memory"
+	"github.com/sanderdescamps/mgit/internal/console"
 )
 
 // type Repo struct {
@@ -13,11 +16,12 @@ import (
 // 	Display  DisplayInterface
 // }
 
-func NewRepo(url string, path string, display DisplayInterface) Repo {
+func NewRepo(url string, path string, display console.Display, insecure bool) Repo {
 	repo := Repo{
 		Url:      url,
 		RepoPath: path,
 		Display:  display,
+		Insecure: false,
 	}
 	return repo
 }
@@ -34,14 +38,29 @@ func (r *Repo) isClonedOnFileSystem() bool {
 	return false
 }
 
+func (r *Repo) IsValidRemote() bool {
+	rem := git.NewRemote(memory.NewStorage(), &config.RemoteConfig{
+		Name: "origin",
+		URLs: []string{r.Url},
+	})
+	_, err := rem.List(&git.ListOptions{})
+	if err == nil {
+		return true
+	} else if err.Error() == "remote repository is empty" {
+		return true
+	}
+	return false
+}
+
 func (r *Repo) Clone() {
 	if r.repo != nil {
 		r.Display.Skip("Repo already cloned")
 	} else if !r.isClonedOnFileSystem() {
 		r.Display.Debugf("Clone repo %s...", r.Url)
+		display := RepoDisplay{writer: r.Display.InfoWriter()}
 		repo, err := git.PlainClone(r.RepoPath, false, &git.CloneOptions{
 			URL:      r.Url,
-			Progress: r.Display.Writer(),
+			Progress: display,
 			// Auth: transport.AuthMethod{},
 		})
 		if err != nil {
@@ -60,3 +79,21 @@ func (r *Repo) Clone() {
 		r.repo = repo
 	}
 }
+
+func (r *Repo) LocalHead() string {
+	ref, err := r.repo.Head()
+	if err != nil {
+		return ""
+	} else {
+		return ref.Hash().String()
+	}
+}
+
+// func (r *Repo) RemoteHead() string {
+// 	remote, err := r.repo.Remote("origin")
+// 	if err != nil {
+// 		return ""
+// 	} else {
+// 		return ref.Hash().String()
+// 	}
+// }

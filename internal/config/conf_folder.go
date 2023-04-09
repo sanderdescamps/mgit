@@ -2,14 +2,12 @@ package config
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 )
 
 type confFolder struct {
-	confElem
 	parent        *confFolder
-	childs        []confElem
+	childs        []*confElem
 	LocalSettings map[string]interface{}
 	Name          string
 }
@@ -53,7 +51,7 @@ func (r confFolder) getPath() string {
 func (r confFolder) repoList() []*confRepo {
 	var repos []*confRepo
 	for _, c := range r.childs {
-		rl := c.repoList()
+		rl := (*c).repoList()
 		if len(rl) > 0 {
 			repos = append(repos, rl...)
 		}
@@ -61,48 +59,11 @@ func (r confFolder) repoList() []*confRepo {
 	return repos
 }
 
-func (r *confFolder) loadRepos(repoMap map[string]interface{}) {
-	settings := make(map[string]interface{})
-	repoNames := []string{}
-
-	for key, val := range repoMap {
-		if strings.HasPrefix(key, "_") {
-			settings[key[1:]] = val
-		} else {
-			repoNames = append(repoNames, key)
-		}
-	}
-
-	if len(repoNames) > 0 {
-		for _, rn := range repoNames {
-			isLeaf := true
-			repoSettings := make(map[string]interface{})
-			if repoMap[rn] != nil && reflect.ValueOf(repoMap[rn]).Kind() == reflect.Map {
-				for key, val := range repoMap[rn].(map[string]interface{}) {
-					if strings.HasPrefix(key, "_") {
-						repoSettings[key[1:]] = val
-					} else {
-						isLeaf = false
-					}
-				}
-			}
-			if isLeaf {
-				newLeaf := newconfRepo(rn, r, repoSettings)
-				r.childs = append(r.childs, newLeaf)
-			} else {
-				newParent := newconfFolder(rn, r, repoSettings)
-				newParent.loadRepos(repoMap[rn].(map[string]interface{}))
-				r.childs = append(r.childs, newParent)
-			}
-		}
-	}
-}
-
-func (r confFolder) getSetting(key string) (interface{}, bool) {
+func (r confFolder) GetSetting(key string) (interface{}, bool) {
 	if val, ok := r.LocalSettings[key]; ok {
 		return val, true
 	} else if r.getParent() != nil {
-		if val, ok := r.getParent().getSetting(key); ok {
+		if val, ok := r.getParent().GetSetting(key); ok {
 			return val, true
 		}
 	}
@@ -119,4 +80,18 @@ func (r confFolder) GetAllSettings() map[string]interface{} {
 		}
 	}
 	return result
+}
+
+func (r *confFolder) AddSetting(key string, val interface{}) {
+	r.LocalSettings[key] = val
+}
+
+func (r *confFolder) AddSettings(settings map[string]interface{}) {
+	for k, v := range settings {
+		r.AddSetting(k, v)
+	}
+}
+
+func (r *confFolder) AddChild(child *confElem) {
+	r.childs = append(r.childs, child)
 }

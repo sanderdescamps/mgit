@@ -22,7 +22,6 @@ var cmdConfigShow = &cobra.Command{
 		for k, v := range viper.AllSettings() {
 			display.Print("%s=%v", k, v)
 		}
-
 	},
 }
 

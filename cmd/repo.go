@@ -24,7 +24,7 @@ var cmdRepoShow = &cobra.Command{
 	Short: "show repo config",
 	Long:  `Manage repo configuration (default: show)`,
 	PreRun: func(cmd *cobra.Command, args []string) {
-		initRepo()
+		loadRepoConfig()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		display.Print(strings.Repeat("-", 80))
@@ -45,7 +45,7 @@ var cmdRepoClone = &cobra.Command{
 	Short: "clone repos",
 	Long:  `Manage repo configuration (default: show)`,
 	PreRun: func(cmd *cobra.Command, args []string) {
-		initRepo()
+		loadRepoConfig()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, repoConf := range repoCfg.GetRepoList() {
@@ -54,8 +54,43 @@ var cmdRepoClone = &cobra.Command{
 			url := repoConf.GetRepoCloneUrl()
 			path := repoConf.GetFSPath()
 			if clone, ok := repoConf.GetSettingBool(config.SETTINGS_CLONE_REPO); clone || !ok {
-				repo := repo.NewRepo(url, path, display)
+				insecure, ok := repoConf.GetSettingBool("insecure")
+				if !ok {
+					insecure = false
+				}
+				repo := repo.NewRepo(url, path, display, insecure)
 				repo.Clone()
+			}
+
+			display.Print(strings.Repeat("-", 80))
+		}
+	},
+}
+
+var cmdRepoCheck = &cobra.Command{
+	Use:   "check",
+	Short: "clone repos",
+	Long:  `Manage repo configuration (default: show)`,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		loadRepoConfig()
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		for _, repoConf := range repoCfg.GetRepoList() {
+			display.Print("%s", repoConf.GetRepoCloneUrl())
+			display.Print(" path: %s", repoConf.GetFSPath())
+			url := repoConf.GetRepoCloneUrl()
+			path := repoConf.GetFSPath()
+			if clone, ok := repoConf.GetSettingBool(config.SETTINGS_CLONE_REPO); clone || !ok {
+				insecure, ok := repoConf.GetSettingBool("insecure")
+				if !ok {
+					insecure = false
+				}
+				repo := repo.NewRepo(url, path, display, insecure)
+				if repo.IsValidRemote() {
+					display.Okf("repo is reachable")
+				} else {
+					display.Errorf("unreachable repo")
+				}
 			}
 
 			display.Print(strings.Repeat("-", 80))

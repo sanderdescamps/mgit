@@ -2,6 +2,7 @@ package console
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -73,6 +74,13 @@ func (c Color) String() string {
 
 type Display struct {
 	LogLevel LogLevel
+	writer   io.Writer
+}
+
+func NewStdoutDisplay(logLevel LogLevel) *Display {
+	return &Display{
+		writer: os.Stdout,
+	}
 }
 
 func (o *Display) SetLogLevel(level LogLevel) {
@@ -148,9 +156,51 @@ func (o Display) Print(format string, a ...any) {
 }
 
 func (o Display) logPrint(prefix string, msg string, color Color) {
-	fmt.Printf("  %s%s: %s%s\n", color, strings.ToUpper(prefix), msg, RESET)
+	text := fmt.Sprintf("  %s%s: %s%s\n", color, strings.ToUpper(prefix), msg, RESET)
+	o.writer.Write([]byte(text))
 }
 
-func (o Display) Writer() *os.File {
-	return os.Stdout
+// func (o Display) Writer() *os.File {
+// 	return os.Stdout
+// }
+
+func (o Display) Writer() *io.Writer {
+	return &o.writer
+}
+
+func (o Display) InfoWriter() *io.Writer {
+	if o.LogLevel <= INFO {
+		return NewTransformWriter(o.writer, func(b []byte) []byte {
+			s := string(b)
+			s = fmt.Sprintf("info: %s", s)
+			b = []byte(s)
+			return b
+		})
+	} else {
+		return &io.Discard
+	}
+}
+
+func (o Display) ErrorWriter() *io.Writer {
+	if o.LogLevel <= ERROR {
+		return &o.writer
+	} else {
+		return &io.Discard
+	}
+}
+
+type TransformWriter struct {
+	io.Writer
+	writer io.Writer
+	f      func([]byte) []byte
+}
+
+func NewTransformWriter(writer io.Writer, f func([]byte) []byte) *io.Writer {
+	var result io.Writer
+	result = TransformWriter{writer: writer, f: f}
+	return &result
+}
+
+func (t TransformWriter) Write(p []byte) (n int, err error) {
+	return t.writer.Write(t.f(p))
 }
