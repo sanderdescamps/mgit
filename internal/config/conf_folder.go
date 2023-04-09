@@ -6,17 +6,18 @@ import (
 )
 
 type confFolder struct {
+	confElem
 	parent        *confFolder
 	childs        []*confElem
 	LocalSettings map[string]interface{}
 	Name          string
 }
 
-func newconfFolder(name string, parent *confFolder, settings map[string]interface{}) confFolder {
+func newconfFolder(name string, parent *confFolder, settings map[string]interface{}) *confFolder {
 	if settings == nil {
 		settings = map[string]interface{}{}
 	}
-	return confFolder{
+	return &confFolder{
 		Name:          name,
 		parent:        parent,
 		LocalSettings: settings,

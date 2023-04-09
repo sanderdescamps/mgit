@@ -17,9 +17,9 @@ func (m *Manager) LoadRepos(paths ...string) {
 		}
 		if _, ok := c["repos"]; ok {
 			// m.repoTree.loadRepos(c["repos"].(map[string]interface{}))
-			m.repoTree = loadRepos("", nil, c["repos"].(map[string]interface{})).(confFolder)
+			m.repoTree = loadRepos("", nil, c["repos"].(map[string]interface{}))
 		} else {
-			m.repoTree = loadRepos("", nil, c).(confFolder)
+			m.repoTree = loadRepos("", nil, c)
 			// m.repoTree.loadRepos(c)
 		}
 
@@ -47,9 +47,9 @@ func loadRepos(name string, parent *confFolder, repoMap map[string]interface{}) 
 		for _, rn := range repoNames {
 			var child confElem
 			if val, ok := repoMap[rn].(map[string]interface{}); ok {
-				child = loadRepos(rn, &folder, val)
+				child = loadRepos(rn, folder, val)
 			} else {
-				child = newconfRepo(rn, &folder, nil)
+				child = newconfRepo(rn, folder, nil)
 			}
 
 			folder.AddChild(&child)

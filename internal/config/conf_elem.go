@@ -8,5 +8,6 @@ type confElem interface {
 	getPathArray() []string
 	GetAllSettings() map[string]interface{}
 	GetSetting(key string) (interface{}, bool)
-	// AddSettings(settings map[string]interface{})
+	AddSetting(key string, val interface{})
+	AddSettings(settings map[string]interface{})
 }

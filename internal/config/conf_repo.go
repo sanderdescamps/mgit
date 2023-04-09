@@ -9,16 +9,17 @@ import (
 )
 
 type confRepo struct {
+	confElem
 	parent        *confFolder
 	LocalSettings map[string]interface{}
 	Name          string
 }
 
-func newconfRepo(name string, parent *confFolder, settings map[string]interface{}) confRepo {
+func newconfRepo(name string, parent *confFolder, settings map[string]interface{}) *confRepo {
 	if settings == nil {
 		settings = map[string]interface{}{}
 	}
-	return confRepo{
+	return &confRepo{
 		Name:          name,
 		parent:        parent,
 		LocalSettings: settings,
@@ -77,6 +78,16 @@ func (r confRepo) getFPath() string {
 		parentPath = strings.Trim(val, sep)
 	}
 	return parentPath
+}
+
+func (r *confRepo) AddSetting(key string, val interface{}) {
+	r.LocalSettings[key] = val
+}
+
+func (r *confRepo) AddSettings(settings map[string]interface{}) {
+	for k, v := range settings {
+		r.AddSetting(k, v)
+	}
 }
 
 func (r confRepo) GetSetting(key string) (interface{}, bool) {
