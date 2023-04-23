@@ -16,11 +16,11 @@ import (
 // 	Display  DisplayInterface
 // }
 
-func NewRepo(url string, path string, display console.Display, insecure bool) Repo {
+func NewRepo(url string, path string, display *console.Display, insecure bool) Repo {
 	repo := Repo{
 		Url:      url,
 		RepoPath: path,
-		Display:  display,
+		Display:  *display,
 		Insecure: false,
 	}
 	return repo
@@ -54,13 +54,13 @@ func (r *Repo) IsValidRemote() bool {
 
 func (r *Repo) Clone() {
 	if r.repo != nil {
-		r.Display.Skip("Repo already cloned")
+		r.Display.Info("Repo already cloned")
 	} else if !r.isClonedOnFileSystem() {
 		r.Display.Debugf("Clone repo %s...", r.Url)
-		display := RepoDisplay{writer: r.Display.InfoWriter()}
+		d := r.Display
 		repo, err := git.PlainClone(r.RepoPath, false, &git.CloneOptions{
 			URL:      r.Url,
-			Progress: display,
+			Progress: d.InfoWriter(),
 			// Auth: transport.AuthMethod{},
 		})
 		if err != nil {
@@ -71,7 +71,7 @@ func (r *Repo) Clone() {
 	} else {
 		repo, err := git.PlainOpen(r.RepoPath)
 		if err == nil {
-			r.Display.Okf("Repo already cloned: %s", r.Url)
+			r.Display.Infof("Repo already cloned: %s", r.Url)
 		} else {
 			r.Display.Errorf("failed to load repo: %s\n%v", r.Url, err.Error())
 			return

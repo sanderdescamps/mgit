@@ -87,11 +87,11 @@ func initMgitConfig() {
 
 func initDisplay() {
 	if Verbose {
-		display = *console.NewStdoutDisplay(console.DEBUG)
+		display = console.NewTerminalDisplay(console.DEBUG)
 	} else {
-		display = *console.NewStdoutDisplay(console.INFO)
+		display = console.NewTerminalDisplay(console.INFO)
 	}
-	config.SetDisplay(&display)
+	config.SetDisplay(display)
 }
 
 func loadRepoConfig() {

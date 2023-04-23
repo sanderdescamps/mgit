@@ -20,7 +20,7 @@ var cmdConfigShow = &cobra.Command{
 	Long:  `Create the local directory structure and clone all repositories`,
 	Run: func(cmd *cobra.Command, args []string) {
 		for k, v := range viper.AllSettings() {
-			display.Print("%s=%v", k, v)
+			display.Printf("%s=%v", k, v)
 		}
 	},
 }
