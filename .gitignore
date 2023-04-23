@@ -24,3 +24,6 @@ git/
 
 # example
 example/
+
+# Old versions of files
+*.bak
