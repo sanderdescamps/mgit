@@ -1,0 +1,63 @@
+---
+
+_git_root_path: ./git
+_git_url_template: git@gitlab.com:axxesit/{{ .rpath }}.git
+ansible_playbook:
+  vyos:
+    _git_url: ssh://git@gitea.myhomecloud.lan:3022/ansible_playbook/vyos.git
+github:
+  _git_url_template: git@github.com:{{ .fpath }}/{{ .repo_name}}.git
+  _git_url_fpath: "sanderdescamps"
+  ansible:
+    _clone: false
+  terraform:
+    providers:
+      terraform-provider-flash:
+      terraform-provider-vyos:
+      terraform-provider-silk:
+      terraform-provider-foreman:
+        _clone: false
+  vyos:
+    _git_url: git@gitea.myhomecloud.lan:3022/ansible_playbook/vyos.git
+axxesit:
+  _git_url_fpath: "axxesit"
+  _git_url_template: git@bitbucket.org:{{ .fpath }}/{{ .repo_name}}.git
+  terraform-rundeck: 
+myhomecloud:
+  _git_url_template: ssh://git@gitea.myhomecloud.lan:3022/{{ .fpath }}/{{ .repo_name}}.git
+  sdescamps:
+    _git_url_fpath: "sdescamps"
+    ansible-coredns:
+    never-sleep:
+  terraform_stacks:
+    _git_url_fpath: "terraform_stacks"
+    vyos:
+  terraform_modules:
+    _git_url_fpath: "terraform_modules"
+    vyos_config:
+  ansible_playbook:
+    _git_url_fpath: "ansible_playbook"
+    vm_deploy:
+    vyos:
+    playbook_template:
+myhomecloud_passphrase:
+  _git_url_template: ssh://git@gitea2.myhomecloud.lan:3022/{{ .fpath }}/{{ .repo_name}}.git
+  sdescamps:
+    _git_url_fpath: "sdescamps"
+    ansible-coredns:
+    never-sleep:
+  terraform_stacks:
+    _git_url_fpath: "terraform_stacks"
+    vyos:
+  terraform_modules:
+    _git_url_fpath: "terraform_modules"
+    vyos_config:
+  ansible_playbook:
+    _git_url_fpath: "ansible_playbook"
+    vm_deploy:
+    vyos:
+    playbook_template:
+
+
+
+
