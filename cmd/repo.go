@@ -72,7 +72,7 @@ var cmdRepoClone = &cobra.Command{
 					display.Final(console.FAILED, err.Error())
 				} else {
 					display.Final(console.OK, "Repo cloned succesfully")
-			}
+				}
 			} else {
 				display.Final(console.SKIPPED, "Repo skipped")
 			}

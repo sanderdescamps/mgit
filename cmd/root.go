@@ -35,6 +35,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.CompletionOptions.DisableDescriptions = true
 	cobra.OnInitialize(initDisplay, initMgitConfig)
 	rootCmd.PersistentFlags().StringVarP(&rootCfg, "rconfig", "c", "", fmt.Sprintf("path to root config file (default is $HOME/%s). Not compatible with --repos", DEFAULT_ROOT_CONFIG_NAME))
 	rootCmd.PersistentFlags().StringSliceVarP(&repoConfigPaths, "repos", "r", []string{}, "path to repo conf files")
@@ -43,7 +44,8 @@ func init() {
 	// rootCmd.AddCommand(cmdClone, cmdPull, cmdConfig)
 	rootCmd.AddCommand(cmdTest, cmdConfig, cmdRepo, cmdRepoClone)
 	cmdConfig.AddCommand(cmdConfigShow, cmdConfigValidate)
-	cmdRepo.AddCommand(cmdRepoClone, cmdRepoCheck)
+	cmdRepo.AddCommand(cmdRepoClone, cmdRepoCheck, cmdRepoShow)
+
 }
 
 func main() {
