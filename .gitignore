@@ -13,3 +13,16 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+dist/
+
+# git clone test dir
+git/
+
+# test config
+./config/
+
+# example
+example/
+mgit
+
