@@ -22,6 +22,9 @@ _auto_complete:
 	@echo "install autocomplete requires root permissions"
 	@sudo cp /tmp/mgit-completion /etc/bash_completion.d/mgit-completion
 
+security:
+	gosec --exclude-dir ./git ./...
+
 build: _build
 install: _build _install _auto_complete
 

@@ -7,10 +7,13 @@ import (
 	"os"
 	"strings"
 
+	"path/filepath"
+
 	"gopkg.in/yaml.v3"
 )
 
 func readJson(path string) (map[string]interface{}, error) {
+	path = filepath.Clean(path)
 	jsonFile, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read json file (%s): %s", path, err.Error())
@@ -18,7 +21,7 @@ func readJson(path string) (map[string]interface{}, error) {
 
 	byteValue, _ := io.ReadAll(jsonFile)
 	var data map[string]interface{}
-	json.Unmarshal(byteValue, &data)
+	err = json.Unmarshal(byteValue, &data)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse json file (%s): %s", path, err.Error())
 	}
@@ -26,6 +29,7 @@ func readJson(path string) (map[string]interface{}, error) {
 }
 
 func readYaml(path string) (map[string]interface{}, error) {
+	path = filepath.Clean(path)
 	yamlFile, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read YAML file (%s): %s", path, err.Error())
@@ -33,7 +37,7 @@ func readYaml(path string) (map[string]interface{}, error) {
 
 	byteValue, _ := io.ReadAll(yamlFile)
 	var data map[string]interface{}
-	yaml.Unmarshal(byteValue, &data)
+	err = yaml.Unmarshal(byteValue, &data)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse YAML file (%s): %s", path, err.Error())
 	}

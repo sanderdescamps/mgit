@@ -49,7 +49,10 @@ func init() {
 }
 
 func main() {
-	rootCmd.Execute()
+	err := rootCmd.Execute()
+	if err != nil {
+		panic("Failed to execute mgit")
+	}
 }
 
 func initMgitConfig() {

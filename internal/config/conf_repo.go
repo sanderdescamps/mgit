@@ -178,11 +178,14 @@ func (r confRepo) GetRepoCloneUrl() string {
 			return ""
 		}
 		var git_url bytes.Buffer
-		tplt.Execute(&git_url, map[string]interface{}{
+		err = tplt.Execute(&git_url, map[string]interface{}{
 			"repo_name": r.GetName(),
 			"fpath":     r.getFPath(),
 			"rpath":     r.getRPath(),
 		})
+		if err != nil {
+			display.Errorf("invalid template: %s", (&git_url).String())
+		}
 		return git_url.String()
 	}
 	return ""

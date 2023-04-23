@@ -255,7 +255,12 @@ func (r *Repo) CheckTcpConnect() error {
 
 	go func() {
 		buf := make([]byte, 1024)
-		defer conn.Close()
+		defer func() {
+			if err := conn.Close(); err != nil {
+				r.Display.Error("failed to close connection")
+			}
+		}()
+
 		for {
 			_, err := conn.Read(buf)
 			if err != nil {
